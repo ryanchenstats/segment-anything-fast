@@ -99,6 +99,7 @@ def _build_sam(
     encoder_num_heads,
     encoder_global_attn_indexes,
     checkpoint=None,
+    custom_image_size=96
 ):
     prompt_embed_dim = 256
     image_size = 1024
@@ -121,8 +122,8 @@ def _build_sam(
         ),
         prompt_encoder=PromptEncoder(
             embed_dim=prompt_embed_dim,
-            image_embedding_size=(image_embedding_size, image_embedding_size),
-            input_image_size=(image_size, image_size),
+            image_embedding_size=(custom_image_size//vit_patch_size, custom_image_size//vit_patch_size),
+            input_image_size=(custom_image_size, custom_image_size),
             mask_in_chans=16,
         ),
         mask_decoder=MaskDecoder(
