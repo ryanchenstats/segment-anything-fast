@@ -34,13 +34,14 @@ def build_sam_vit_l(checkpoint=None):
     )
 
 
-def build_sam_vit_b(checkpoint=None):
+def build_sam_vit_b(checkpoint=None, custom_image_size=96):
     return _build_sam(
         encoder_embed_dim=768,
         encoder_depth=12,
         encoder_num_heads=12,
         encoder_global_attn_indexes=[2, 5, 8, 11],
         checkpoint=checkpoint,
+        custom_image_size=custom_image_size
     )
 
 
@@ -78,8 +79,8 @@ def build_sam_fast_vit_l(checkpoint=None):
     sam.image_encoder = torch.compile(sam.image_encoder, mode='max-autotune')
     return sam
 
-def build_sam_fast_vit_b(checkpoint=None):
-    sam = build_sam_vit_b(checkpoint)
+def build_sam_fast_vit_b(checkpoint=None, custom_image_size=96):
+    sam = build_sam_vit_b(checkpoint, custom_image_size=96)
     sam = _apply_eval_dtype_sam(sam)
     sam.image_encoder = torch.compile(sam.image_encoder, mode='max-autotune')
     return sam
