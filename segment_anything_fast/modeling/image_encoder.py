@@ -107,7 +107,10 @@ class ImageEncoderViT(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.patch_embed(x)
         if self.pos_embed is not None:
-            x = x + self.pos_embed
+            try:
+                x = x + self.pos_embed
+            except:
+                x = x + self.interpolate_pos_encoding(*x.shape[1:3])
 
         for blk in self.blocks:
             x = blk(x)
@@ -115,6 +118,16 @@ class ImageEncoderViT(nn.Module):
         x = self.neck(x.permute(0, 3, 1, 2))
 
         return x
+
+    def interpolate_pos_encoding(self, h, w):
+        height, width = self.pos_embed.shape[1:3]
+    
+        patch_pos_embed = nn.functional.interpolate(
+            self.pos_embed.permute(0, 3, 1, 2),
+            scale_factor=(h / height, w / width),
+            mode='bicubic',
+        ).permute(0, 2, 3, 1)
+        return patch_pos_embed
 
 
 class Block(nn.Module):
