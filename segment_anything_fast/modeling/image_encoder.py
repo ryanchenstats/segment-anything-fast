@@ -107,10 +107,7 @@ class ImageEncoderViT(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.patch_embed(x)
         if self.pos_embed is not None:
-            try:
-                x = x + self.pos_embed
-            except:
-                x = x + self.interpolate_pos_encoding(*x.shape[1:3])
+            x = x + self.interpolate_pos_encoding(*x.shape[1:3])
 
         for blk in self.blocks:
             x = blk(x)
